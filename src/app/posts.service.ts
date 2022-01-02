@@ -5,35 +5,35 @@ import { Post } from './posts.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
+  url: string =
+    'https://ng-complete-guide-b04f9-default-rtdb.firebaseio.com/posts.json';
+
   constructor(private http: HttpClient) {}
   createAndStorePost(title: string, content: string) {
     const postData: Post = { title: title, content: content };
     this.http
-      .post<{ name: string }>(
-        'https://ng-complete-guide-b04f9-default-rtdb.firebaseio.com/posts.json',
-        postData
-      )
+      .post<{ name: string }>(this.url, postData)
       .subscribe((responseData) => {
         console.log(responseData);
       });
   }
 
   fetchPosts() {
-    return this.http
-      .get<{ [key: string]: Post }>(
-        'https://ng-complete-guide-b04f9-default-rtdb.firebaseio.com/posts.json'
-      )
-      .pipe(
-        // map((responseData: { [key: string]: Post }) => { // Alternate way
-        map((responseData) => {
-          const postArray: Post[] = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              postArray.push({ ...responseData[key], id: key });
-            }
+    return this.http.get<{ [key: string]: Post }>(this.url).pipe(
+      // map((responseData: { [key: string]: Post }) => { // Alternate way
+      map((responseData) => {
+        const postArray: Post[] = [];
+        for (const key in responseData) {
+          if (responseData.hasOwnProperty(key)) {
+            postArray.push({ ...responseData[key], id: key });
           }
-          return postArray;
-        })
-      );
+        }
+        return postArray;
+      })
+    );
+  }
+
+  deletePosts() {
+    return this.http.delete(this.url);
   }
 }
