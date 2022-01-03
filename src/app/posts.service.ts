@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Post } from './posts.model';
 
 @Injectable({ providedIn: 'root' })
@@ -35,6 +35,10 @@ export class PostsService {
           }
         }
         return postArray;
+      }),
+      catchError((errorRes) => {
+        // Send to Analytics Server
+        return throwError(errorRes);
       })
     );
   }
@@ -42,4 +46,7 @@ export class PostsService {
   deletePosts() {
     return this.http.delete(this.url);
   }
+}
+function errorRes(errorRes: any) {
+  throw new Error('Function not implemented.');
 }
