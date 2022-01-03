@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Post } from './posts.model';
 
@@ -8,14 +9,19 @@ export class PostsService {
   url: string =
     'https://ng-complete-guide-b04f9-default-rtdb.firebaseio.com/posts.json';
 
+  error = new Subject<string>();
+
   constructor(private http: HttpClient) {}
   createAndStorePost(title: string, content: string) {
     const postData: Post = { title: title, content: content };
-    this.http
-      .post<{ name: string }>(this.url, postData)
-      .subscribe((responseData) => {
+    this.http.post<{ name: string }>(this.url, postData).subscribe(
+      (responseData) => {
         console.log(responseData);
-      });
+      },
+      (error) => {
+        this.error.next(error.message);
+      }
+    );
   }
 
   fetchPosts() {
