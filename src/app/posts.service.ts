@@ -22,6 +22,7 @@ export class PostsService {
     this.http
       .post<{ name: string }>(this.url, postData, {
         observe: 'response',
+        responseType: 'json', // Default is json
       })
       .subscribe(
         (responseData) => {
@@ -66,6 +67,7 @@ export class PostsService {
     return this.http
       .delete(this.url, {
         observe: 'events',
+        responseType: 'text',
       })
       .pipe(
         tap((event) => {
